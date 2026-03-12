@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "RapidFill",
+  "description": "Autofill job application forms",
+  "version": "1.0.0",
+
+  "permissions": ["storage", "activeTab", "scripting"],
+
+  "host_permissions": ["<all_urls>"],
+
+  "action": {
+    "default_popup": "index.html"
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"]
+    }
+  ]
+}

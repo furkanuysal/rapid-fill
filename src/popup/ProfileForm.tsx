@@ -1,178 +1,115 @@
-import { useEffect, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import type { UserProfile } from "../types/UserProfile";
-import { saveProfile, getProfile } from "../storage/profileStorage";
 
-export default function ProfileForm() {
-  const [profile, setProfile] = useState<UserProfile>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    linkedin: "",
-    github: "",
-    portfolio: "",
-    address: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
-    gender: "",
-    birthDate: "",
-    company: "",
-    jobTitle: "",
-    school: "",
-    major: "",
-    gradCity: "",
-    graduationYear: "",
-  });
+interface ProfileFormProps {
+  profile: UserProfile;
+  onChange: Dispatch<SetStateAction<UserProfile>>;
+  onSave: () => Promise<void>;
+  onCancel: () => void;
+  isSaving: boolean;
+}
 
-  useEffect(() => {
-    async function loadProfile() {
-      const stored = await getProfile();
+const FIELD_GROUPS: Array<{
+  title: string;
+  fields: Array<{
+    key: keyof UserProfile;
+    label: string;
+    placeholder: string;
+    type?: string;
+  }>;
+}> = [
+  {
+    title: "Core Profile",
+    fields: [
+      { key: "firstName", label: "First Name", placeholder: "Alex" },
+      { key: "lastName", label: "Last Name", placeholder: "Chen" },
+      { key: "email", label: "Email", placeholder: "alex@dev.io", type: "email" },
+      { key: "phone", label: "Phone", placeholder: "+1 555 0123", type: "tel" },
+    ],
+  },
+  {
+    title: "Links",
+    fields: [
+      { key: "linkedin", label: "LinkedIn", placeholder: "linkedin.com/in/alexchen", type: "url" },
+      { key: "github", label: "GitHub", placeholder: "github.com/alex-dev", type: "url" },
+      { key: "portfolio", label: "Portfolio", placeholder: "alexchen.dev", type: "url" },
+    ],
+  },
+  {
+    title: "Location",
+    fields: [
+      { key: "address", label: "Street Address", placeholder: "221B Baker Street" },
+      { key: "city", label: "City", placeholder: "London" },
+      { key: "state", label: "State / Province", placeholder: "Greater London" },
+      { key: "postalCode", label: "Postal Code", placeholder: "NW1 6XE" },
+      { key: "country", label: "Country", placeholder: "United Kingdom" },
+    ],
+  },
+  {
+    title: "Professional",
+    fields: [
+      { key: "company", label: "Company", placeholder: "OpenAI" },
+      { key: "jobTitle", label: "Job Title", placeholder: "Frontend Engineer" },
+      { key: "school", label: "School", placeholder: "MIT" },
+      { key: "major", label: "Major", placeholder: "Computer Science" },
+      { key: "gradCity", label: "Graduation City", placeholder: "Cambridge" },
+      { key: "graduationYear", label: "Graduation Year", placeholder: "2024", type: "number" },
+    ],
+  },
+  {
+    title: "Personal",
+    fields: [
+      { key: "gender", label: "Gender", placeholder: "Optional" },
+      { key: "birthDate", label: "Birth Date", placeholder: "1990-01-01", type: "date" },
+    ],
+  },
+];
 
-      if (stored) {
-        setProfile(stored);
-      }
-    }
-
-    loadProfile();
-  }, []);
-
+export default function ProfileForm({
+  profile,
+  onChange,
+  onSave,
+  onCancel,
+  isSaving,
+}: ProfileFormProps) {
   function updateField(field: keyof UserProfile, value: string) {
-    setProfile((prev) => ({
-      ...prev,
+    onChange((current) => ({
+      ...current,
       [field]: value,
     }));
   }
 
-  async function handleSave() {
-    await saveProfile(profile);
-    alert("Profile saved");
-  }
-
   return (
-    <div>
-      <input
-        placeholder="First name"
-        value={profile.firstName}
-        onChange={(e) => updateField("firstName", e.target.value)}
-      />
+    <section className="editor-page">
+      <div className="editor-groups">
+        {FIELD_GROUPS.map((group) => (
+          <section className="form-group" key={group.title}>
+            <h4>{group.title}</h4>
+            <div className="form-grid">
+              {group.fields.map((field) => (
+                <label className="field" key={field.key}>
+                  <span>{field.label}</span>
+                  <input
+                    onChange={(event) => updateField(field.key, event.target.value)}
+                    placeholder={field.placeholder}
+                    type={field.type ?? "text"}
+                    value={profile[field.key] ?? ""}
+                  />
+                </label>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
 
-      <input
-        placeholder="Last name"
-        value={profile.lastName}
-        onChange={(e) => updateField("lastName", e.target.value)}
-      />
-
-      <input
-        placeholder="Email"
-        value={profile.email}
-        onChange={(e) => updateField("email", e.target.value)}
-      />
-
-      <input
-        placeholder="Phone"
-        value={profile.phone}
-        onChange={(e) => updateField("phone", e.target.value)}
-      />
-
-      <input
-        placeholder="LinkedIn"
-        value={profile.linkedin || ""}
-        onChange={(e) => updateField("linkedin", e.target.value)}
-      />
-
-      <input
-        placeholder="GitHub"
-        value={profile.github || ""}
-        onChange={(e) => updateField("github", e.target.value)}
-      />
-
-      <input
-        placeholder="Portfolio URL"
-        value={profile.portfolio || ""}
-        onChange={(e) => updateField("portfolio", e.target.value)}
-      />
-
-      <input
-        placeholder="Street Address"
-        value={profile.address || ""}
-        onChange={(e) => updateField("address", e.target.value)}
-      />
-
-      <input
-        placeholder="City"
-        value={profile.city || ""}
-        onChange={(e) => updateField("city", e.target.value)}
-      />
-
-      <input
-        placeholder="State / Province"
-        value={profile.state || ""}
-        onChange={(e) => updateField("state", e.target.value)}
-      />
-
-      <input
-        placeholder="Postal / ZIP Code"
-        value={profile.postalCode || ""}
-        onChange={(e) => updateField("postalCode", e.target.value)}
-      />
-
-      <input
-        placeholder="Country"
-        value={profile.country || ""}
-        onChange={(e) => updateField("country", e.target.value)}
-      />
-
-      <input
-        placeholder="Gender"
-        value={profile.gender || ""}
-        onChange={(e) => updateField("gender", e.target.value)}
-      />
-
-      <input
-        placeholder="Birth Date (e.g. 1990-01-01)"
-        value={profile.birthDate || ""}
-        onChange={(e) => updateField("birthDate", e.target.value)}
-      />
-
-      <input
-        placeholder="Company"
-        value={profile.company || ""}
-        onChange={(e) => updateField("company", e.target.value)}
-      />
-
-      <input
-        placeholder="Job Title"
-        value={profile.jobTitle || ""}
-        onChange={(e) => updateField("jobTitle", e.target.value)}
-      />
-
-      <input
-        placeholder="School / University"
-        value={profile.school || ""}
-        onChange={(e) => updateField("school", e.target.value)}
-      />
-
-      <input
-        placeholder="Major / Field of Study"
-        value={profile.major || ""}
-        onChange={(e) => updateField("major", e.target.value)}
-      />
-
-      <input
-        placeholder="Graduation City"
-        value={profile.gradCity || ""}
-        onChange={(e) => updateField("gradCity", e.target.value)}
-      />
-
-      <input
-        placeholder="Graduation Year (e.g. 2020)"
-        value={profile.graduationYear || ""}
-        onChange={(e) => updateField("graduationYear", e.target.value)}
-      />
-
-      <button onClick={handleSave}>Save Profile</button>
-    </div>
+      <div className="editor-actions">
+        <button className="ghost-action" onClick={onCancel} type="button">
+          Cancel
+        </button>
+        <button className="primary-action" disabled={isSaving} onClick={() => void onSave()} type="button">
+          {isSaving ? "Saving..." : "Save Profile"}
+        </button>
+      </div>
+    </section>
   );
 }

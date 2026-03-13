@@ -1,6 +1,7 @@
 import type { ProfileField } from "./fieldDetector";
 
 export const EXCLUDED_KEYWORDS = [
+  // Third-party person references
   "reference",
   "referral",
   "emergency",
@@ -13,6 +14,31 @@ export const EXCLUDED_KEYWORDS = [
   "friend",
   "colleague",
   "partner",
+
+  // Authentication & security — never autofill these
+  "password",
+  "passwd",
+  "passphrase",
+  "pin",
+  "secret",
+  "security question",
+  "security_question",
+  "secret question",
+  "answer",
+  "captcha",
+
+  // Sensitive personal data
+  "ssn",
+  "social security",
+  "national id",
+  "national_id",
+  "passport",
+  "tax id",
+  "tax_id",
+  "credit card",
+  "card number",
+  "cvv",
+  "cvc",
 ];
 
 export const FIELD_KEYWORDS: Record<ProfileField, string[]> = {
@@ -38,7 +64,30 @@ export const FIELD_KEYWORDS: Record<ProfileField, string[]> = {
 
   portfolio: ["portfolio", "website", "personal_site", "personal website", "portfolio_url", "website_url", "personal web"],
 
-  location: ["location", "city", "address", "country", "zip", "postal", "state", "province"],
+  // NOTE: "city" is intentionally kept generic here. Graduation-specific fields
+  // (gradCity, school, major) have their own dedicated keywords which will score
+  // higher than the generic 'location' match when the form contains 'grad' context.
+  address: [
+    "address", "street", "street address", "address_line", "address line",
+    "addr", "street_address", "address1", "address_1",
+  ],
+
+  city: [
+    "city", "town", "municipality",
+  ],
+
+  state: [
+    "state", "province", "region",
+  ],
+
+  postalCode: [
+    "zip", "zipcode", "postal", "postal code", "zip code",
+    "postcode", "post_code", "zip_code", "postal_code",
+  ],
+
+  country: [
+    "country", "country_region", "country region", "nation",
+  ],
 
   gender: ["gender", "sex"],
 
@@ -47,4 +96,24 @@ export const FIELD_KEYWORDS: Record<ProfileField, string[]> = {
   company: ["company", "organization", "employer", "current company"],
 
   jobTitle: ["job", "title", "position", "role", "profession", "occupation", "job_title", "job title"],
+
+  school: [
+    "school", "university", "college", "institution", "institute",
+    "school_name", "college_name", "university_name",
+  ],
+
+  major: [
+    "major", "field of study", "field_of_study", "degree", "program",
+    "department", "discipline", "study", "specialization",
+  ],
+
+  gradCity: [
+    "grad_city", "gradcity", "grad city", "graduation_city", "graduation city",
+    "school_city", "schoolcity", "college_city", "university_city",
+  ],
+
+  graduationYear: [
+    "graduation_year", "graduationyear", "grad_year", "grad year",
+    "year of graduation", "class year", "classyear", "class of",
+  ],
 };

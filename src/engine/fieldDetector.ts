@@ -9,11 +9,19 @@ export type ProfileField =
   | "linkedin"
   | "github"
   | "portfolio"
-  | "location"
+  | "address"
+  | "city"
+  | "state"
+  | "postalCode"
+  | "country"
   | "gender"
   | "birthDate"
   | "company"
-  | "jobTitle";
+  | "jobTitle"
+  | "school"
+  | "major"
+  | "gradCity"
+  | "graduationYear";
 
 export type FieldSignals = {
   name: string;

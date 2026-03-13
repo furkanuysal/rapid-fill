@@ -9,10 +9,19 @@ export interface UserProfile {
   github?: string;
   portfolio?: string;
 
-  location?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
 
   gender?: string;
   birthDate?: string;
   company?: string;
   jobTitle?: string;
+
+  school?: string;
+  major?: string;
+  gradCity?: string;
+  graduationYear?: string;
 }

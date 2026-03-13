@@ -11,11 +11,19 @@ export default function ProfileForm() {
     linkedin: "",
     github: "",
     portfolio: "",
-    location: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
     gender: "",
     birthDate: "",
     company: "",
     jobTitle: "",
+    school: "",
+    major: "",
+    gradCity: "",
+    graduationYear: "",
   });
 
   useEffect(() => {
@@ -87,9 +95,33 @@ export default function ProfileForm() {
       />
 
       <input
-        placeholder="Location"
-        value={profile.location || ""}
-        onChange={(e) => updateField("location", e.target.value)}
+        placeholder="Street Address"
+        value={profile.address || ""}
+        onChange={(e) => updateField("address", e.target.value)}
+      />
+
+      <input
+        placeholder="City"
+        value={profile.city || ""}
+        onChange={(e) => updateField("city", e.target.value)}
+      />
+
+      <input
+        placeholder="State / Province"
+        value={profile.state || ""}
+        onChange={(e) => updateField("state", e.target.value)}
+      />
+
+      <input
+        placeholder="Postal / ZIP Code"
+        value={profile.postalCode || ""}
+        onChange={(e) => updateField("postalCode", e.target.value)}
+      />
+
+      <input
+        placeholder="Country"
+        value={profile.country || ""}
+        onChange={(e) => updateField("country", e.target.value)}
       />
 
       <input
@@ -114,6 +146,30 @@ export default function ProfileForm() {
         placeholder="Job Title"
         value={profile.jobTitle || ""}
         onChange={(e) => updateField("jobTitle", e.target.value)}
+      />
+
+      <input
+        placeholder="School / University"
+        value={profile.school || ""}
+        onChange={(e) => updateField("school", e.target.value)}
+      />
+
+      <input
+        placeholder="Major / Field of Study"
+        value={profile.major || ""}
+        onChange={(e) => updateField("major", e.target.value)}
+      />
+
+      <input
+        placeholder="Graduation City"
+        value={profile.gradCity || ""}
+        onChange={(e) => updateField("gradCity", e.target.value)}
+      />
+
+      <input
+        placeholder="Graduation Year (e.g. 2020)"
+        value={profile.graduationYear || ""}
+        onChange={(e) => updateField("graduationYear", e.target.value)}
       />
 
       <button onClick={handleSave}>Save Profile</button>

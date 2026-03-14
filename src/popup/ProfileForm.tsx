@@ -1,4 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
+import type { Translations } from "../lib/i18n";
 import type { UserProfile } from "../types/UserProfile";
 
 interface ProfileFormProps {
@@ -7,63 +8,8 @@ interface ProfileFormProps {
   onSave: () => Promise<void>;
   onCancel: () => void;
   isSaving: boolean;
+  t: Translations;
 }
-
-const FIELD_GROUPS: Array<{
-  title: string;
-  fields: Array<{
-    key: keyof UserProfile;
-    label: string;
-    placeholder: string;
-    type?: string;
-  }>;
-}> = [
-  {
-    title: "Core Profile",
-    fields: [
-      { key: "firstName", label: "First Name", placeholder: "Alex" },
-      { key: "lastName", label: "Last Name", placeholder: "Chen" },
-      { key: "email", label: "Email", placeholder: "alex@dev.io", type: "email" },
-      { key: "phone", label: "Phone", placeholder: "+1 555 0123", type: "tel" },
-    ],
-  },
-  {
-    title: "Links",
-    fields: [
-      { key: "linkedin", label: "LinkedIn", placeholder: "linkedin.com/in/alexchen", type: "url" },
-      { key: "github", label: "GitHub", placeholder: "github.com/alex-dev", type: "url" },
-      { key: "portfolio", label: "Portfolio", placeholder: "alexchen.dev", type: "url" },
-    ],
-  },
-  {
-    title: "Location",
-    fields: [
-      { key: "address", label: "Street Address", placeholder: "221B Baker Street" },
-      { key: "city", label: "City", placeholder: "London" },
-      { key: "state", label: "State / Province", placeholder: "Greater London" },
-      { key: "postalCode", label: "Postal Code", placeholder: "NW1 6XE" },
-      { key: "country", label: "Country", placeholder: "United Kingdom" },
-    ],
-  },
-  {
-    title: "Professional",
-    fields: [
-      { key: "company", label: "Company", placeholder: "OpenAI" },
-      { key: "jobTitle", label: "Job Title", placeholder: "Frontend Engineer" },
-      { key: "school", label: "School", placeholder: "MIT" },
-      { key: "major", label: "Major", placeholder: "Computer Science" },
-      { key: "gradCity", label: "Graduation City", placeholder: "Cambridge" },
-      { key: "graduationYear", label: "Graduation Year", placeholder: "2024", type: "number" },
-    ],
-  },
-  {
-    title: "Personal",
-    fields: [
-      { key: "gender", label: "Gender", placeholder: "Optional" },
-      { key: "birthDate", label: "Birth Date", placeholder: "1990-01-01", type: "date" },
-    ],
-  },
-];
 
 export default function ProfileForm({
   profile,
@@ -71,7 +17,69 @@ export default function ProfileForm({
   onSave,
   onCancel,
   isSaving,
+  t,
 }: ProfileFormProps) {
+  const fieldGroups: Array<{
+    title: string;
+    fields: Array<{
+      key: keyof UserProfile;
+      label: string;
+      placeholder: string;
+      type?: string;
+    }>;
+  }> = [
+    {
+      title: t.formGroups.core,
+      fields: [
+        { key: "firstName", label: t.formFields.firstName, placeholder: t.placeholders.firstName },
+        { key: "lastName", label: t.formFields.lastName, placeholder: t.placeholders.lastName },
+        { key: "email", label: t.formFields.email, placeholder: t.placeholders.email, type: "email" },
+        { key: "phone", label: t.formFields.phone, placeholder: t.placeholders.phone, type: "tel" },
+      ],
+    },
+    {
+      title: t.formGroups.links,
+      fields: [
+        { key: "linkedin", label: t.formFields.linkedin, placeholder: t.placeholders.linkedin, type: "url" },
+        { key: "github", label: t.formFields.github, placeholder: t.placeholders.github, type: "url" },
+        { key: "portfolio", label: t.formFields.portfolio, placeholder: t.placeholders.portfolio, type: "url" },
+      ],
+    },
+    {
+      title: t.formGroups.location,
+      fields: [
+        { key: "address", label: t.formFields.address, placeholder: t.placeholders.address },
+        { key: "city", label: t.formFields.city, placeholder: t.placeholders.city },
+        { key: "state", label: t.formFields.state, placeholder: t.placeholders.state },
+        { key: "postalCode", label: t.formFields.postalCode, placeholder: t.placeholders.postalCode },
+        { key: "country", label: t.formFields.country, placeholder: t.placeholders.country },
+      ],
+    },
+    {
+      title: t.formGroups.professional,
+      fields: [
+        { key: "company", label: t.formFields.company, placeholder: t.placeholders.company },
+        { key: "jobTitle", label: t.formFields.jobTitle, placeholder: t.placeholders.jobTitle },
+        { key: "school", label: t.formFields.school, placeholder: t.placeholders.school },
+        { key: "major", label: t.formFields.major, placeholder: t.placeholders.major },
+        { key: "gradCity", label: t.formFields.gradCity, placeholder: t.placeholders.gradCity },
+        {
+          key: "graduationYear",
+          label: t.formFields.graduationYear,
+          placeholder: t.placeholders.graduationYear,
+          type: "number",
+        },
+      ],
+    },
+    {
+      title: t.formGroups.personal,
+      fields: [
+        { key: "gender", label: t.formFields.gender, placeholder: t.placeholders.gender },
+        { key: "birthDate", label: t.formFields.birthDate, placeholder: t.placeholders.birthDate, type: "date" },
+      ],
+    },
+  ];
+
   function updateField(field: keyof UserProfile, value: string) {
     onChange((current) => ({
       ...current,
@@ -82,7 +90,7 @@ export default function ProfileForm({
   return (
     <section className="editor-page">
       <div className="editor-groups">
-        {FIELD_GROUPS.map((group) => (
+        {fieldGroups.map((group) => (
           <section className="form-group" key={group.title}>
             <h4>{group.title}</h4>
             <div className="form-grid">
@@ -104,10 +112,10 @@ export default function ProfileForm({
 
       <div className="editor-actions">
         <button className="ghost-action" onClick={onCancel} type="button">
-          Cancel
+          {t.cancel}
         </button>
         <button className="primary-action" disabled={isSaving} onClick={() => void onSave()} type="button">
-          {isSaving ? "Saving..." : "Save Profile"}
+          {isSaving ? t.saving : t.saveProfile}
         </button>
       </div>
     </section>

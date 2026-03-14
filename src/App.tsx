@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { getProfile, saveProfile } from "./storage/profileStorage";
-import type { UserProfile } from "./types/UserProfile";
+import { resolveInitialLanguage, translations, type AppLanguage } from "./lib/i18n";
 import PopupEditPage from "./popup/PopupEditPage";
 import PopupHomePage from "./popup/PopupHomePage";
 import { EMPTY_PROFILE, mergeWithDefaults } from "./popup/popupProfile";
+import { getLanguage, saveLanguage } from "./storage/languageStorage";
+import { getProfile, saveProfile } from "./storage/profileStorage";
+import type { UserProfile } from "./types/UserProfile";
 
 type PopupView = "home" | "edit";
 
@@ -26,19 +28,26 @@ function autofillCurrentPage() {
 export default function App() {
   const [profile, setProfile] = useState<UserProfile>(EMPTY_PROFILE);
   const [draftProfile, setDraftProfile] = useState<UserProfile>(EMPTY_PROFILE);
+  const [language, setLanguage] = useState<AppLanguage>(resolveInitialLanguage());
   const [view, setView] = useState<PopupView>("home");
   const [renderedView, setRenderedView] = useState<PopupView>("home");
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
   useEffect(() => {
-    async function loadProfile() {
-      const stored = mergeWithDefaults(await getProfile());
-      setProfile(stored);
-      setDraftProfile(stored);
+    async function loadPopupState() {
+      const [storedProfile, storedLanguage] = await Promise.all([getProfile(), getLanguage()]);
+      const mergedProfile = mergeWithDefaults(storedProfile);
+
+      setProfile(mergedProfile);
+      setDraftProfile(mergedProfile);
+
+      if (storedLanguage) {
+        setLanguage(storedLanguage);
+      }
     }
 
-    void loadProfile();
+    void loadPopupState();
   }, []);
 
   useEffect(() => {
@@ -52,6 +61,11 @@ export default function App() {
 
     return () => window.clearTimeout(timeoutId);
   }, [renderedView, view]);
+
+  function handleLanguageChange(nextLanguage: AppLanguage) {
+    setLanguage(nextLanguage);
+    void saveLanguage(nextLanguage);
+  }
 
   function openEditPage() {
     setSaveMessage("");
@@ -76,7 +90,7 @@ export default function App() {
     try {
       await saveProfile(draftProfile);
       setProfile(draftProfile);
-      setSaveMessage("Profile saved");
+      setSaveMessage(translations[language].profileSaved);
       setRenderedView("home");
       window.requestAnimationFrame(() => {
         setView("home");
@@ -88,6 +102,7 @@ export default function App() {
 
   const shouldShowHome = renderedView === "home" || view === "home";
   const shouldShowEdit = renderedView === "edit" || view === "edit";
+  const copy = translations[language];
 
   return (
     <div className="popup-shell">
@@ -99,10 +114,13 @@ export default function App() {
               className={`page-layer page-layer-home ${view === "home" ? "is-active" : "is-exiting"}`}
             >
               <PopupHomePage
+                language={language}
                 onAutofill={autofillCurrentPage}
                 onEdit={openEditPage}
+                onLanguageChange={handleLanguageChange}
                 profile={profile}
                 saveMessage={saveMessage}
+                t={copy}
               />
             </div>
           ) : null}
@@ -118,6 +136,7 @@ export default function App() {
                 onChange={setDraftProfile}
                 onSave={handleSave}
                 profile={draftProfile}
+                t={copy}
               />
             </div>
           ) : null}

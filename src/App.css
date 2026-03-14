@@ -111,6 +111,12 @@
   min-width: 0;
 }
 
+.edit-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .brand-icon {
   width: 34px;
   height: 34px;
@@ -487,10 +493,43 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   padding: 12px 18px 16px;
   color: #6d83b0;
   font-size: 0.76rem;
   border-top: 1px solid rgba(85, 103, 151, 0.14);
+}
+
+.footer-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.language-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.language-label {
+  color: #8ea4d0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.language-select {
+  min-width: 108px;
+  min-height: 32px;
+  padding: 0 30px 0 12px;
+  border: 1px solid rgba(95, 117, 170, 0.22);
+  border-radius: 10px;
+  background: rgba(10, 21, 40, 0.92);
+  color: #e6eeff;
 }
 
 @media (prefers-reduced-motion: reduce) {

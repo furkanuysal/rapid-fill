@@ -1,34 +1,47 @@
+import { supportedLanguages, type AppLanguage, type Translations } from "../lib/i18n";
 import type { UserProfile } from "../types/UserProfile";
 import {
   formatFullName,
   formatWebsite,
   getCompletionRatio,
-  getProfileStatus,
+  isProfileReady,
 } from "./popupProfile";
 
 interface PopupHomePageProps {
+  language: AppLanguage;
   profile: UserProfile;
   saveMessage: string;
+  t: Translations;
   onAutofill: () => void;
   onEdit: () => void;
+  onLanguageChange: (language: AppLanguage) => void;
 }
 
 export default function PopupHomePage({
+  language,
   profile,
   saveMessage,
+  t,
   onAutofill,
   onEdit,
+  onLanguageChange,
 }: PopupHomePageProps) {
-  const overviewItems = [
-    { label: "Full Name", value: formatFullName(profile), muted: !profile.firstName && !profile.lastName },
-    { label: "Email Address", value: profile.email || "Add email", muted: !profile.email },
-    { label: "Phone", value: profile.phone || "Add phone", muted: !profile.phone },
-    { label: "LinkedIn", value: profile.linkedin || "Add LinkedIn", muted: !profile.linkedin },
-    { label: "GitHub", value: profile.github || "Add GitHub", muted: !profile.github },
-    { label: "Portfolio", value: formatWebsite(profile.portfolio), muted: !profile.portfolio },
-  ];
-
+  const fullName = formatFullName(profile) || t.addName;
+  const website = formatWebsite(profile.portfolio) || t.addWebsite;
   const completionRatio = getCompletionRatio(profile);
+
+  const overviewItems = [
+    { label: t.overviewLabels.fullName, value: fullName, muted: !profile.firstName && !profile.lastName },
+    { label: t.overviewLabels.email, value: profile.email || t.fieldFallbacks.email, muted: !profile.email },
+    { label: t.overviewLabels.phone, value: profile.phone || t.fieldFallbacks.phone, muted: !profile.phone },
+    {
+      label: t.overviewLabels.linkedin,
+      value: profile.linkedin || t.fieldFallbacks.linkedin,
+      muted: !profile.linkedin,
+    },
+    { label: t.overviewLabels.github, value: profile.github || t.fieldFallbacks.github, muted: !profile.github },
+    { label: t.overviewLabels.portfolio, value: website, muted: !profile.portfolio },
+  ];
 
   return (
     <div className="page-frame">
@@ -38,20 +51,22 @@ export default function PopupHomePage({
             <span />
           </div>
           <div className="brand-copy">
-            <h1>RapidFill</h1>
-            <p>Application autofill assistant</p>
+            <h1>{t.appName}</h1>
+            <p>{t.appSubtitle}</p>
           </div>
         </div>
 
         <div className="status-pill">
           <span className="status-dot" />
-          <span>{getProfileStatus(profile)}</span>
+          <span>{isProfileReady(profile) ? t.profileReady : t.profileIncomplete}</span>
         </div>
       </header>
 
       <div className="section-heading">
-        <span>Profile Overview</span>
-        <span>{completionRatio}% complete</span>
+        <span>{t.profileOverview}</span>
+        <span>
+          {completionRatio}% {t.completeSuffix}
+        </span>
       </div>
 
       <div className="overview-grid">
@@ -65,13 +80,9 @@ export default function PopupHomePage({
 
       <button className="insight-panel insight-panel-button" onClick={onEdit} type="button">
         <div>
-          <span className="eyebrow">Ready State</span>
-          <h2>{profile.jobTitle || "Set your target role"}</h2>
-          <p>
-            {profile.company
-              ? `Current company: ${profile.company}`
-              : "Add role and company details to improve field matching on job forms."}
-          </p>
+          <span className="eyebrow">{t.readyState}</span>
+          <h2>{profile.jobTitle || t.targetRoleFallback}</h2>
+          <p>{profile.company ? t.companySummary(profile.company) : t.companySummaryFallback}</p>
         </div>
 
         <div
@@ -85,19 +96,36 @@ export default function PopupHomePage({
 
       <div className="action-stack">
         <button className="primary-action" onClick={onAutofill} type="button">
-          Autofill This Page
+          {t.autofillButton}
         </button>
 
         <button className="secondary-action" onClick={onEdit} type="button">
-          Edit Profile Data
+          {t.editProfileButton}
         </button>
       </div>
 
       {saveMessage ? <p className="save-message">{saveMessage}</p> : null}
 
       <footer className="popup-footer">
-        <span>Help & Docs</span>
-        <span>v0.2 popup refresh</span>
+        <div className="footer-meta">
+          <span>{t.helpDocs}</span>
+          <span>{t.popupVersion}</span>
+        </div>
+
+        <label className="language-field">
+          <span className="language-label">{t.languageLabel}</span>
+          <select
+            className="language-select"
+            onChange={(event) => onLanguageChange(event.target.value as AppLanguage)}
+            value={language}
+          >
+            {supportedLanguages.map((item) => (
+              <option key={item.code} value={item.code}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </footer>
     </div>
   );

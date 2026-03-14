@@ -1,10 +1,12 @@
 import type { Dispatch, SetStateAction } from "react";
+import type { Translations } from "../lib/i18n";
 import type { UserProfile } from "../types/UserProfile";
 import ProfileForm from "./ProfileForm";
 
 interface PopupEditPageProps {
   profile: UserProfile;
   isSaving: boolean;
+  t: Translations;
   onChange: Dispatch<SetStateAction<UserProfile>>;
   onSave: () => Promise<void>;
   onBack: () => void;
@@ -13,6 +15,7 @@ interface PopupEditPageProps {
 export default function PopupEditPage({
   profile,
   isSaving,
+  t,
   onChange,
   onSave,
   onBack,
@@ -20,15 +23,17 @@ export default function PopupEditPage({
   return (
     <div className="page-frame page-frame-edit">
       <header className="edit-page-header">
-        <button className="back-button" onClick={onBack} type="button">
-          <span aria-hidden="true">&lt;</span>
-          <span>Back</span>
-        </button>
+        <div className="edit-topbar">
+          <button className="back-button" onClick={onBack} type="button">
+            <span aria-hidden="true">&lt;</span>
+            <span>{t.back}</span>
+          </button>
+        </div>
 
         <div className="edit-page-heading">
-          <span className="eyebrow">Profile Setup</span>
-          <h2>Edit Your Autofill Data</h2>
-          <p>Update your details here, save, then return to the main popup screen.</p>
+          <span className="eyebrow">{t.profileSetup}</span>
+          <h2>{t.editProfileTitle}</h2>
+          <p>{t.editProfileDescription}</p>
         </div>
       </header>
 
@@ -38,6 +43,7 @@ export default function PopupEditPage({
         onChange={onChange}
         onSave={onSave}
         profile={profile}
+        t={t}
       />
     </div>
   );

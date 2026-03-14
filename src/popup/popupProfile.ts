@@ -30,10 +30,8 @@ export function mergeWithDefaults(profile?: UserProfile | null): UserProfile {
   };
 }
 
-export function getProfileStatus(profile: UserProfile) {
-  return profile.firstName && profile.lastName && profile.email && profile.phone
-    ? "Profile Ready"
-    : "Profile Incomplete";
+export function isProfileReady(profile: UserProfile) {
+  return Boolean(profile.firstName && profile.lastName && profile.email && profile.phone);
 }
 
 export function getCompletionRatio(profile: UserProfile) {
@@ -43,13 +41,12 @@ export function getCompletionRatio(profile: UserProfile) {
 }
 
 export function formatFullName(profile: UserProfile) {
-  const fullName = `${profile.firstName} ${profile.lastName}`.trim();
-  return fullName || "Add your name";
+  return `${profile.firstName} ${profile.lastName}`.trim();
 }
 
 export function formatWebsite(value?: string) {
   if (!value) {
-    return "Add website";
+    return "";
   }
 
   return value.replace(/^https?:\/\//, "");

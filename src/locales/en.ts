@@ -3,8 +3,6 @@ import type { Translations } from "../lib/i18n";
 export const en: Translations = {
   appName: "RapidFill",
   appSubtitle: "Application autofill assistant",
-  profileReady: "Profile Ready",
-  profileIncomplete: "Profile Incomplete",
   profileOverview: "Profile Overview",
   completeSuffix: "complete",
   readyState: "Ready State",
@@ -24,6 +22,7 @@ export const en: Translations = {
     "Update your details here, save, then return to the main popup screen.",
   saveProfile: "Save Profile",
   saving: "Saving...",
+  profileCleared: "Profile cleared",
   cancel: "Cancel",
   addName: "Add your name",
   addWebsite: "Add website",

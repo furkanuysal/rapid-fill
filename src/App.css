@@ -1,27 +1,16 @@
 .popup-shell {
   height: 100vh;
   padding: 0;
-  background:
-    radial-gradient(circle at top left, rgba(44, 89, 255, 0.32), transparent 30%),
-    linear-gradient(180deg, #091327 0%, #07101f 100%);
+  background: #091327;
 }
 
 .popup-card {
   position: relative;
   height: 100vh;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(17, 31, 57, 0.96) 0%, rgba(8, 18, 35, 0.98) 100%);
+  background: #091327;
   border: 1px solid rgba(118, 143, 255, 0.18);
   box-shadow: 0 20px 45px rgba(1, 6, 17, 0.42);
-}
-
-.popup-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 88px;
-  background: linear-gradient(90deg, rgba(39, 88, 255, 0.2), rgba(30, 172, 255, 0.06));
-  pointer-events: none;
 }
 
 .page-stage {
@@ -97,17 +86,21 @@
 }
 
 .popup-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   padding: 22px 18px 16px;
+  background:
+    radial-gradient(circle at top left, rgba(44, 89, 255, 0.22), transparent 42%),
+    linear-gradient(180deg, rgba(17, 31, 57, 0.98) 0%, rgba(12, 24, 45, 0.98) 100%);
+  border-bottom: 1px solid rgba(85, 103, 151, 0.14);
 }
 
 .brand-block {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
   min-width: 0;
 }
 
@@ -118,25 +111,25 @@
 }
 
 .brand-icon {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: block;
-  flex: 0 0 32px;
-  border-radius: 8px;
+  flex: 0 0 28px;
+  border-radius: 7px;
   object-fit: contain;
 }
 
 .brand-copy {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
+  align-content: center;
+  gap: 5px;
   min-width: 0;
 }
 
 .brand-block h1,
 .edit-page-heading h2 {
   margin: 0;
-  font-size: 1.7rem;
+  font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -144,42 +137,72 @@
 
 .brand-block p,
 .edit-page-heading p {
-  margin: 6px 0 0;
+  margin: 0;
   font-size: 0.76rem;
-  line-height: 1.2;
+  line-height: 1.35;
   color: #7d90bb;
+  max-width: 180px;
+  text-wrap: balance;
 }
 
 .status-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  align-self: flex-start;
-  margin-top: 2px;
+  width: fit-content;
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(9, 24, 46, 0.78);
-  border: 1px solid rgba(79, 218, 146, 0.18);
-  color: #77e6aa;
   font-size: 0.7rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.08em;
+  text-transform: uppercase;
   white-space: nowrap;
+}
+
+.status-pill-ready {
+  background: rgba(14, 54, 34, 0.9);
+  border: 1px solid rgba(79, 218, 146, 0.22);
+  color: #77e6aa;
+}
+
+.status-pill-incomplete {
+  background: rgba(70, 44, 7, 0.92);
+  border: 1px solid rgba(255, 177, 66, 0.24);
+  color: #ffcb72;
+}
+
+.status-pill-empty {
+  background: rgba(70, 18, 24, 0.92);
+  border: 1px solid rgba(255, 110, 126, 0.24);
+  color: #ff8c98;
+}
+
+.status-pill-ready .status-dot {
+  background: #2be272;
+  box-shadow: 0 0 10px rgba(43, 226, 114, 0.7);
+}
+
+.status-pill-incomplete .status-dot {
+  background: #ffb142;
+  box-shadow: 0 0 10px rgba(255, 177, 66, 0.7);
+}
+
+.status-pill-empty .status-dot {
+  background: #ff6477;
+  box-shadow: 0 0 10px rgba(255, 100, 119, 0.72);
 }
 
 .status-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #2be272;
-  box-shadow: 0 0 10px rgba(43, 226, 114, 0.7);
 }
 
 .section-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   padding: 14px 18px 0;
   color: #6d84b7;
   font-size: 0.76rem;
@@ -330,6 +353,7 @@
 
 .primary-action,
 .secondary-action,
+.danger-action,
 .ghost-action,
 .back-button {
   display: inline-flex;
@@ -358,6 +382,7 @@
 }
 
 .secondary-action,
+.danger-action,
 .ghost-action,
 .back-button {
   min-height: 46px;
@@ -366,8 +391,30 @@
   border: 1px solid rgba(111, 132, 186, 0.22);
 }
 
+.danger-action {
+  min-width: 128px;
+  padding-inline: 14px;
+  background: rgba(74, 18, 28, 0.92);
+  color: #ffb5bf;
+  border: 1px solid rgba(255, 105, 122, 0.24);
+}
+
+.danger-icon-action {
+  min-width: 46px;
+  width: 46px;
+  padding: 0;
+  flex: 0 0 46px;
+}
+
+.danger-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
 .primary-action:hover,
 .secondary-action:hover,
+.danger-action:hover,
 .ghost-action:hover,
 .back-button:hover {
   transform: translateY(-1px);
@@ -527,6 +574,7 @@
   .page-layer,
   .primary-action,
   .secondary-action,
+  .danger-action,
   .ghost-action,
   .back-button,
   .overview-tile-button,

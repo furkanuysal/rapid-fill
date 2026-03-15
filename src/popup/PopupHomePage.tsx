@@ -4,7 +4,6 @@ import {
   formatFullName,
   formatWebsite,
   getCompletionRatio,
-  isProfileReady,
 } from "./popupProfile";
 
 interface PopupHomePageProps {
@@ -31,6 +30,8 @@ export default function PopupHomePage({
   const fullName = formatFullName(profile) || t.addName;
   const website = formatWebsite(profile.portfolio) || t.addWebsite;
   const completionRatio = getCompletionRatio(profile);
+  const completionStatus =
+    completionRatio === 100 ? "ready" : completionRatio === 0 ? "empty" : "incomplete";
 
   const overviewItems = [
     { label: t.overviewLabels.fullName, value: fullName, muted: !profile.firstName && !profile.lastName },
@@ -62,18 +63,14 @@ export default function PopupHomePage({
             <p>{t.appSubtitle}</p>
           </div>
         </div>
-
-        <div className="status-pill">
-          <span className="status-dot" />
-          <span>{isProfileReady(profile) ? t.profileReady : t.profileIncomplete}</span>
-        </div>
       </header>
 
       <div className="section-heading">
         <span>{t.profileOverview}</span>
-        <span>
+        <div className={`status-pill status-pill-${completionStatus}`}>
+          <span className="status-dot" />
           {completionRatio}% {t.completeSuffix}
-        </span>
+        </div>
       </div>
 
       <div className="overview-grid">

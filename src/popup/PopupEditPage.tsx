@@ -8,6 +8,7 @@ interface PopupEditPageProps {
   isSaving: boolean;
   t: Translations;
   onChange: Dispatch<SetStateAction<UserProfile>>;
+  onClear: () => Promise<void>;
   onSave: () => Promise<void>;
   onBack: () => void;
 }
@@ -17,6 +18,7 @@ export default function PopupEditPage({
   isSaving,
   t,
   onChange,
+  onClear,
   onSave,
   onBack,
 }: PopupEditPageProps) {
@@ -41,6 +43,7 @@ export default function PopupEditPage({
         isSaving={isSaving}
         onCancel={onBack}
         onChange={onChange}
+        onClear={onClear}
         onSave={onSave}
         profile={profile}
         t={t}

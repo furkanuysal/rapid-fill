@@ -6,8 +6,6 @@ export type AppLanguage = "en" | "tr";
 export interface Translations {
   appName: string;
   appSubtitle: string;
-  profileReady: string;
-  profileIncomplete: string;
   profileOverview: string;
   completeSuffix: string;
   readyState: string;
@@ -25,6 +23,7 @@ export interface Translations {
   editProfileDescription: string;
   saveProfile: string;
   saving: string;
+  profileCleared: string;
   cancel: string;
   addName: string;
   addWebsite: string;

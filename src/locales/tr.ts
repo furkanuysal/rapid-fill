@@ -3,8 +3,6 @@ import type { Translations } from "../lib/i18n";
 export const tr: Translations = {
   appName: "RapidFill",
   appSubtitle: "Başvuru formu otomatik doldurma yardımcısı",
-  profileReady: "Profil Hazır",
-  profileIncomplete: "Profil Eksik",
   profileOverview: "Profil Özeti",
   completeSuffix: "tamamlandı",
   readyState: "Hazırlık Durumu",
@@ -24,6 +22,7 @@ export const tr: Translations = {
     "Bilgilerini burada güncelle, kaydet ve ana popup ekranına dön.",
   saveProfile: "Profili Kaydet",
   saving: "Kaydediliyor...",
+  profileCleared: "Profil temizlendi",
   cancel: "İptal",
   addName: "İsmini ekle",
   addWebsite: "Web sitesi ekle",

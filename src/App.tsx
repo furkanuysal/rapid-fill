@@ -5,7 +5,7 @@ import PopupEditPage from "./popup/PopupEditPage";
 import PopupHomePage from "./popup/PopupHomePage";
 import { EMPTY_PROFILE, mergeWithDefaults } from "./popup/popupProfile";
 import { getLanguage, saveLanguage } from "./storage/languageStorage";
-import { getProfile, saveProfile } from "./storage/profileStorage";
+import { clearProfile, getProfile, saveProfile } from "./storage/profileStorage";
 import type { UserProfile } from "./types/UserProfile";
 
 type PopupView = "home" | "edit";
@@ -101,6 +101,23 @@ export default function App() {
     }
   }
 
+  async function handleClearProfile() {
+    setIsSaving(true);
+
+    try {
+      await clearProfile();
+      setProfile(EMPTY_PROFILE);
+      setDraftProfile(EMPTY_PROFILE);
+      setSaveMessage(translations[language].profileCleared);
+      setRenderedView("home");
+      window.requestAnimationFrame(() => {
+        setView("home");
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
   const shouldShowHome = renderedView === "home" || view === "home";
   const shouldShowEdit = renderedView === "edit" || view === "edit";
   const copy = translations[language];
@@ -136,6 +153,7 @@ export default function App() {
                 isSaving={isSaving}
                 onBack={closeEditPage}
                 onChange={setDraftProfile}
+                onClear={handleClearProfile}
                 onSave={handleSave}
                 profile={draftProfile}
                 t={copy}

@@ -8,6 +8,7 @@ import {
 } from "./popupProfile";
 
 interface PopupHomePageProps {
+  extensionVersion: string;
   language: AppLanguage;
   profile: UserProfile;
   saveMessage: string;
@@ -18,6 +19,7 @@ interface PopupHomePageProps {
 }
 
 export default function PopupHomePage({
+  extensionVersion,
   language,
   profile,
   saveMessage,
@@ -47,9 +49,14 @@ export default function PopupHomePage({
     <div className="page-frame">
       <header className="popup-header">
         <div className="brand-block">
-          <div className="brand-icon" aria-hidden="true">
-            <span />
-          </div>
+          <img
+            alt=""
+            aria-hidden="true"
+            className="brand-icon"
+            height="32"
+            src="/icons/32x32.png"
+            width="32"
+          />
           <div className="brand-copy">
             <h1>{t.appName}</h1>
             <p>{t.appSubtitle}</p>
@@ -109,7 +116,7 @@ export default function PopupHomePage({
       <footer className="popup-footer">
         <div className="footer-meta">
           <span>{t.helpDocs}</span>
-          <span>{t.popupVersion}</span>
+          <span>v{extensionVersion}</span>
         </div>
 
         <label className="language-field">

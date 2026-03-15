@@ -16,7 +16,6 @@ export const tr: Translations = {
   editProfileButton: "Profil Bilgilerini Düzenle",
   helpDocs: "Yardım ve Doküman",
   languageLabel: "Dil",
-  popupVersion: "v0.2 popup yenileme",
   profileSaved: "Profil kaydedildi",
   back: "Geri",
   profileSetup: "Profil Ayarı",

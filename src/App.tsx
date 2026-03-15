@@ -29,6 +29,7 @@ export default function App() {
   const [profile, setProfile] = useState<UserProfile>(EMPTY_PROFILE);
   const [draftProfile, setDraftProfile] = useState<UserProfile>(EMPTY_PROFILE);
   const [language, setLanguage] = useState<AppLanguage>(resolveInitialLanguage());
+  const [extensionVersion] = useState(() => chrome.runtime.getManifest().version);
   const [view, setView] = useState<PopupView>("home");
   const [renderedView, setRenderedView] = useState<PopupView>("home");
   const [isSaving, setIsSaving] = useState(false);
@@ -114,6 +115,7 @@ export default function App() {
               className={`page-layer page-layer-home ${view === "home" ? "is-active" : "is-exiting"}`}
             >
               <PopupHomePage
+                extensionVersion={extensionVersion}
                 language={language}
                 onAutofill={autofillCurrentPage}
                 onEdit={openEditPage}

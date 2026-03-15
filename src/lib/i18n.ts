@@ -18,7 +18,6 @@ export interface Translations {
   editProfileButton: string;
   helpDocs: string;
   languageLabel: string;
-  popupVersion: string;
   profileSaved: string;
   back: string;
   profileSetup: string;

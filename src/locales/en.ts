@@ -16,7 +16,6 @@ export const en: Translations = {
   editProfileButton: "Edit Profile Data",
   helpDocs: "Help & Docs",
   languageLabel: "Language",
-  popupVersion: "v0.2 popup refresh",
   profileSaved: "Profile saved",
   back: "Back",
   profileSetup: "Profile Setup",

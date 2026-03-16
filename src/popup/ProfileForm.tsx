@@ -1,6 +1,8 @@
+import { useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { Translations } from "../lib/i18n";
 import type { UserProfile } from "../types/UserProfile";
+import { combinePhoneParts, getPhoneParts, PHONE_COUNTRY_OPTIONS } from "./phoneCountryCodes";
 
 interface ProfileFormProps {
   profile: UserProfile;
@@ -12,6 +14,19 @@ interface ProfileFormProps {
   t: Translations;
 }
 
+function isCoreFullWidthField(field: keyof UserProfile) {
+  return field === "email";
+}
+
+const GENDER_VALUES = [
+  "male",
+  "female",
+  "non-binary",
+  "prefer-not-to-answer",
+] as const;
+
+type ValidationErrors = Partial<Record<keyof UserProfile | "phone", string>>;
+
 export default function ProfileForm({
   profile,
   onChange,
@@ -21,6 +36,9 @@ export default function ProfileForm({
   isSaving,
   t,
 }: ProfileFormProps) {
+  const birthDatePickerRef = useRef<HTMLInputElement | null>(null);
+  const [errors, setErrors] = useState<ValidationErrors>({});
+
   const fieldGroups: Array<{
     title: string;
     fields: Array<{
@@ -36,7 +54,6 @@ export default function ProfileForm({
         { key: "firstName", label: t.formFields.firstName, placeholder: t.placeholders.firstName },
         { key: "lastName", label: t.formFields.lastName, placeholder: t.placeholders.lastName },
         { key: "email", label: t.formFields.email, placeholder: t.placeholders.email, type: "email" },
-        { key: "phone", label: t.formFields.phone, placeholder: t.placeholders.phone, type: "tel" },
       ],
     },
     {
@@ -87,6 +104,129 @@ export default function ProfileForm({
       ...current,
       [field]: value,
     }));
+
+    setErrors((current) => {
+      if (!current[field]) {
+        return current;
+      }
+
+      const nextErrors = { ...current };
+      delete nextErrors[field];
+      return nextErrors;
+    });
+  }
+
+  const phoneParts = getPhoneParts(profile.phone);
+
+  function updatePhoneField(nextDialCode: string, nextNationalNumber: string) {
+    updateField("phone", combinePhoneParts(nextDialCode, nextNationalNumber));
+  }
+
+  function validateField(field: keyof UserProfile, value: string): string | undefined {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+      return undefined;
+    }
+
+    if (field === "email") {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedValue) ? undefined : t.validation.invalidEmail;
+    }
+
+    if (field === "linkedin" || field === "github" || field === "portfolio") {
+      try {
+        const normalizedValue = /^https?:\/\//i.test(trimmedValue) ? trimmedValue : `https://${trimmedValue}`;
+        new URL(normalizedValue);
+        return undefined;
+      } catch {
+        return t.validation.invalidUrl;
+      }
+    }
+
+    if (field === "graduationYear") {
+      return /^\d{4}$/.test(trimmedValue) ? undefined : t.validation.invalidGraduationYear;
+    }
+
+    if (field === "birthDate") {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
+        return t.validation.invalidBirthDate;
+      }
+
+      const date = new Date(`${trimmedValue}T00:00:00`);
+      return Number.isNaN(date.getTime()) ? t.validation.invalidBirthDate : undefined;
+    }
+
+    if (field === "phone") {
+      const digits = trimmedValue.replace(/\D/g, "");
+      return digits.length >= 7 ? undefined : t.validation.invalidPhone;
+    }
+
+    return undefined;
+  }
+
+  function handleFieldBlur(field: keyof UserProfile, value: string) {
+    const error = validateField(field, value);
+
+    setErrors((current) => {
+      if (!error && !current[field]) {
+        return current;
+      }
+
+      const nextErrors = { ...current };
+
+      if (error) {
+        nextErrors[field] = error;
+      } else {
+        delete nextErrors[field];
+      }
+
+      return nextErrors;
+    });
+  }
+
+  function validateBeforeSave() {
+    const nextErrors: ValidationErrors = {};
+    const fieldsToValidate: Array<keyof UserProfile> = [
+      "email",
+      "linkedin",
+      "github",
+      "portfolio",
+      "graduationYear",
+      "birthDate",
+      "phone",
+    ];
+
+    for (const field of fieldsToValidate) {
+      const error = validateField(field, String(profile[field] ?? ""));
+      if (error) {
+        nextErrors[field] = error;
+      }
+    }
+
+    setErrors(nextErrors);
+
+    return Object.keys(nextErrors).length === 0;
+  }
+
+  function openBirthDatePicker() {
+    const input = birthDatePickerRef.current;
+    if (input && "showPicker" in input) {
+      input.showPicker();
+    }
+  }
+
+  function normalizeBirthDateInput(rawValue: string) {
+    const digits = rawValue.replace(/\D/g, "").slice(0, 8);
+
+    if (digits.length <= 4) {
+      return digits;
+    }
+
+    if (digits.length <= 6) {
+      return `${digits.slice(0, 4)}-${digits.slice(4)}`;
+    }
+
+    return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
   }
 
   return (
@@ -97,16 +237,120 @@ export default function ProfileForm({
             <h4>{group.title}</h4>
             <div className="form-grid">
               {group.fields.map((field) => (
-                <label className="field" key={field.key}>
+                <label
+                  className={`field${group.title === t.formGroups.core && isCoreFullWidthField(field.key) ? " field-full" : ""}`}
+                  key={field.key}
+                >
                   <span>{field.label}</span>
-                  <input
-                    onChange={(event) => updateField(field.key, event.target.value)}
-                    placeholder={field.placeholder}
-                    type={field.type ?? "text"}
-                    value={profile[field.key] ?? ""}
-                  />
+                  {field.key === "gender" ? (
+                    <select
+                      className={`field-select${errors[field.key] ? " is-invalid" : ""}`}
+                      onBlur={(event) => handleFieldBlur(field.key, event.target.value)}
+                      onChange={(event) => updateField(field.key, event.target.value)}
+                      value={profile.gender ?? ""}
+                    >
+                      <option value="">{field.placeholder}</option>
+                      <option value={GENDER_VALUES[0]}>{t.genderOptions.male}</option>
+                      <option value={GENDER_VALUES[1]}>{t.genderOptions.female}</option>
+                      <option value={GENDER_VALUES[2]}>{t.genderOptions.nonBinary}</option>
+                      <option value={GENDER_VALUES[3]}>{t.genderOptions.preferNotToAnswer}</option>
+                    </select>
+                  ) : field.key === "birthDate" ? (
+                    <div className="date-field">
+                      <input
+                        className={errors[field.key] ? "is-invalid" : ""}
+                        inputMode="numeric"
+                        onBlur={(event) => handleFieldBlur(field.key, event.target.value)}
+                        onChange={(event) => updateField(field.key, normalizeBirthDateInput(event.target.value))}
+                        placeholder={field.placeholder}
+                        type="text"
+                        value={profile.birthDate ?? ""}
+                      />
+                      <button
+                        aria-label={field.label}
+                        className="date-picker-button"
+                        onClick={openBirthDatePicker}
+                        type="button"
+                      >
+                        <svg aria-hidden="true" viewBox="0 -960 960 960">
+                          <path
+                            d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h80v-80h80v80h240v-80h80v80h80q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-360H200v360Zm0-440h560v-120H200v120Zm0 0v-120 120Z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                      <input
+                        className="date-picker-native"
+                        onChange={(event) => updateField(field.key, event.target.value)}
+                        ref={birthDatePickerRef}
+                        tabIndex={-1}
+                        type="date"
+                        value={profile.birthDate ?? ""}
+                      />
+                    </div>
+                  ) : (
+                    <input
+                      className={errors[field.key] ? "is-invalid" : ""}
+                      onBlur={(event) => handleFieldBlur(field.key, event.target.value)}
+                      onChange={(event) => updateField(field.key, event.target.value)}
+                      placeholder={field.placeholder}
+                      type={field.type ?? "text"}
+                      value={profile[field.key] ?? ""}
+                    />
+                  )}
+                  {errors[field.key] ? <small className="field-error">{errors[field.key]}</small> : null}
                 </label>
               ))}
+
+              {group.title === t.formGroups.core ? (
+                <div className="field field-full">
+                  <span id="phone-field-label">{t.formFields.phone}</span>
+                  <div
+                    className={`phone-control${errors.phone ? " is-invalid" : ""}`}
+                    role="group"
+                    aria-labelledby="phone-field-label"
+                  >
+                    <div className="phone-code-field">
+                      <span aria-hidden="true" className="phone-code-value">
+                        {phoneParts.dialCode || "+"}
+                      </span>
+                      <select
+                        className="field-select"
+                        aria-label={t.formFields.phoneCode}
+                        id="phone-code"
+                        onChange={(event) => updatePhoneField(event.target.value, phoneParts.nationalNumber)}
+                        value={phoneParts.dialCode}
+                      >
+                        <option value="">+</option>
+                        {PHONE_COUNTRY_OPTIONS.map((option) => (
+                          <option key={option.country} value={option.dialCode}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="phone-number-field">
+                      <input
+                        autoComplete="tel-national"
+                        aria-label={t.formFields.phoneNumber}
+                        className={errors.phone ? "is-invalid" : ""}
+                        id="phone-number"
+                        inputMode="numeric"
+                        onBlur={(event) => handleFieldBlur("phone", event.target.value)}
+                        onChange={(event) =>
+                          updatePhoneField(phoneParts.dialCode, event.target.value.replace(/\D/g, ""))
+                        }
+                        pattern="[0-9]*"
+                        placeholder={t.placeholders.phoneNumber}
+                        type="tel"
+                        value={phoneParts.nationalNumber}
+                      />
+                    </div>
+                  </div>
+                  {errors.phone ? <small className="field-error">{errors.phone}</small> : null}
+                </div>
+              ) : null}
             </div>
           </section>
         ))}
@@ -129,7 +373,18 @@ export default function ProfileForm({
             />
           </svg>
         </button>
-        <button className="primary-action" disabled={isSaving} onClick={() => void onSave()} type="button">
+        <button
+          className="primary-action"
+          disabled={isSaving}
+          onClick={() => {
+            if (!validateBeforeSave()) {
+              return;
+            }
+
+            void onSave();
+          }}
+          type="button"
+        >
           {isSaving ? t.saving : t.saveProfile}
         </button>
       </div>

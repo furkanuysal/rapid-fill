@@ -11,7 +11,7 @@ import type { UserProfile } from "./types/UserProfile";
 type PopupView = "home" | "edit";
 
 function autofillCurrentPage() {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
     const tab = tabs[0];
 
     if (!tab?.id) {
@@ -19,9 +19,18 @@ function autofillCurrentPage() {
       return;
     }
 
-    chrome.tabs.sendMessage(tab.id, {
-      type: "AUTOFILL_PAGE",
-    });
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ["contentScript.js"],
+      });
+
+      await chrome.tabs.sendMessage(tab.id, {
+        type: "AUTOFILL_PAGE",
+      });
+    } catch (error) {
+      console.error("RapidFill: Failed to inject content script", error);
+    }
   });
 }
 

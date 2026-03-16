@@ -53,6 +53,8 @@ export interface Translations {
     lastName: string;
     email: string;
     phone: string;
+    phoneCode: string;
+    phoneNumber: string;
     linkedin: string;
     github: string;
     portfolio: string;
@@ -75,6 +77,8 @@ export interface Translations {
     lastName: string;
     email: string;
     phone: string;
+    phoneCode: string;
+    phoneNumber: string;
     linkedin: string;
     github: string;
     portfolio: string;
@@ -91,6 +95,19 @@ export interface Translations {
     graduationYear: string;
     gender: string;
     birthDate: string;
+  };
+  genderOptions: {
+    male: string;
+    female: string;
+    nonBinary: string;
+    preferNotToAnswer: string;
+  };
+  validation: {
+    invalidEmail: string;
+    invalidUrl: string;
+    invalidPhone: string;
+    invalidGraduationYear: string;
+    invalidBirthDate: string;
   };
 }
 

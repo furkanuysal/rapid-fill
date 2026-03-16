@@ -83,7 +83,7 @@ export default function PopupHomePage({
       </div>
 
       <button className="insight-panel insight-panel-button" onClick={onEdit} type="button">
-        <div>
+        <div className="insight-copy">
           <span className="eyebrow">{t.readyState}</span>
           <h2>{profile.jobTitle || t.targetRoleFallback}</h2>
           <p>{profile.company ? t.companySummary(profile.company) : t.companySummaryFallback}</p>
@@ -112,7 +112,14 @@ export default function PopupHomePage({
 
       <footer className="popup-footer">
         <div className="footer-meta">
-          <span>{t.helpDocs}</span>
+          <a
+            className="footer-link"
+            href="https://github.com/furkanuysal/rapid-fill"
+            rel="noreferrer"
+            target="_blank"
+          >
+            {t.helpDocs}
+          </a>
           <span>v{extensionVersion}</span>
         </div>
 

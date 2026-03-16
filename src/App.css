@@ -249,7 +249,6 @@
 
 .overview-tile-button,
 .insight-panel-button {
-  width: 100%;
   cursor: pointer;
   appearance: none;
   color: inherit;
@@ -258,6 +257,14 @@
     border-color 180ms ease,
     box-shadow 180ms ease,
     background-color 180ms ease;
+}
+
+.overview-tile-button {
+  width: 100%;
+}
+
+.insight-panel-button {
+  width: auto;
 }
 
 .overview-tile-button:hover,
@@ -293,6 +300,11 @@
   color: #f5f8ff;
 }
 
+.insight-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .insight-panel-button .eyebrow {
   color: #7f95c2;
 }
@@ -303,6 +315,7 @@
 
 .insight-panel-button p {
   color: #90a1c3;
+  word-break: break-word;
 }
 
 .eyebrow {
@@ -487,12 +500,17 @@
   gap: 6px;
 }
 
+.field-full {
+  grid-column: 1 / -1;
+}
+
 .field span {
   color: #8ba0cc;
   font-size: 0.76rem;
 }
 
-.field input {
+.field input,
+.field-select {
   width: 100%;
   min-width: 0;
   min-height: 40px;
@@ -503,14 +521,178 @@
   padding: 0 12px;
 }
 
+.field-select {
+  padding-right: 34px;
+  color-scheme: dark;
+}
+
+.field input.is-invalid,
+.field-select.is-invalid,
+.phone-number-field input.is-invalid,
+.date-field input.is-invalid {
+  border-color: #ff6d7e;
+  box-shadow: 0 0 0 3px rgba(255, 109, 126, 0.16);
+}
+
+.field-error {
+  color: #ff9fac;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.field-select option {
+  background: #0b1730;
+  color: #f3f6ff;
+}
+
 .field input::placeholder {
   color: #6277a7;
 }
 
-.field input:focus {
+.field input:focus,
+.field-select:focus {
   outline: none;
   border-color: #4270ff;
   box-shadow: 0 0 0 3px rgba(66, 112, 255, 0.16);
+}
+
+.phone-control {
+  display: grid;
+  grid-template-columns: 124px minmax(0, 1fr);
+  min-height: 40px;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(103, 124, 184, 0.18);
+  background: rgba(6, 14, 28, 0.84);
+}
+
+.phone-control:focus-within {
+  border-color: #4270ff;
+  box-shadow: 0 0 0 3px rgba(66, 112, 255, 0.16);
+}
+
+.phone-control.is-invalid {
+  border-color: #ff6d7e;
+  box-shadow: 0 0 0 3px rgba(255, 109, 126, 0.16);
+}
+
+.phone-code-field {
+  position: relative;
+}
+
+.phone-code-value {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: flex;
+  align-items: center;
+  padding: 0 30px 0 10px;
+  color: #f3f6ff;
+  font-size: 0.92rem;
+  pointer-events: none;
+}
+
+.phone-code-field::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  z-index: 2;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #9fb3de;
+  border-bottom: 2px solid #9fb3de;
+  transform: translateY(-65%) rotate(45deg);
+  pointer-events: none;
+}
+
+.phone-code-field::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 0;
+  bottom: 8px;
+  width: 1px;
+  background: rgba(103, 124, 184, 0.18);
+  pointer-events: none;
+}
+
+.phone-code-field .field-select,
+.phone-number-field input {
+  height: 100%;
+  min-height: 40px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.phone-code-field .field-select:focus,
+.phone-number-field input:focus {
+  box-shadow: none;
+}
+
+.phone-code-field .field-select {
+  position: relative;
+  z-index: 1;
+  color: transparent;
+  padding-inline: 10px 30px 10px 10px;
+  text-shadow: none;
+  appearance: none;
+}
+
+.phone-number-field input {
+  padding-inline: 14px 12px;
+}
+
+.date-field {
+  position: relative;
+}
+
+.date-field input[type="text"] {
+  padding-right: 44px;
+}
+
+.date-picker-button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(26, 45, 86, 0.88);
+  color: #b7c7ea;
+  transform: translateY(-50%);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.date-picker-button:hover {
+  background: rgba(40, 67, 120, 0.92);
+  color: #f3f6ff;
+}
+
+.date-picker-button svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.date-picker-native {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.phone-code-field .field-select option {
+  color: #f3f6ff;
 }
 
 .editor-actions {
@@ -543,6 +725,16 @@
   align-items: center;
   gap: 12px;
   min-width: 0;
+}
+
+.footer-link {
+  color: #8ea4d0;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.footer-link:hover {
+  color: #d8e3ff;
 }
 
 .language-field {

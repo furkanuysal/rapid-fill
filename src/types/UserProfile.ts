@@ -19,6 +19,9 @@ export interface UserProfile {
   birthDate?: string;
   company?: string;
   jobTitle?: string;
+  employmentStartDate?: string;
+  employmentEndDate?: string;
+  currentlyWorking: boolean;
 
   school?: string;
   major?: string;

@@ -132,7 +132,7 @@ export default function App() {
   const copy = translations[language];
 
   return (
-    <div className="popup-shell">
+    <div className="popup-shell" lang={language}>
       <section className="popup-card">
         <div className="page-stage">
           {shouldShowHome ? (

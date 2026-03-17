@@ -26,6 +26,7 @@ const GENDER_VALUES = [
 ] as const;
 
 type ValidationErrors = Partial<Record<keyof UserProfile | "phone", string>>;
+type DateFieldKey = "birthDate" | "employmentStartDate" | "employmentEndDate";
 
 export default function ProfileForm({
   profile,
@@ -36,7 +37,7 @@ export default function ProfileForm({
   isSaving,
   t,
 }: ProfileFormProps) {
-  const birthDatePickerRef = useRef<HTMLInputElement | null>(null);
+  const datePickerRefs = useRef<Partial<Record<DateFieldKey, HTMLInputElement | null>>>({});
   const [errors, setErrors] = useState<ValidationErrors>({});
 
   const fieldGroups: Array<{
@@ -75,10 +76,27 @@ export default function ProfileForm({
       ],
     },
     {
-      title: t.formGroups.professional,
+      title: t.formGroups.experience,
       fields: [
         { key: "company", label: t.formFields.company, placeholder: t.placeholders.company },
         { key: "jobTitle", label: t.formFields.jobTitle, placeholder: t.placeholders.jobTitle },
+        {
+          key: "employmentStartDate",
+          label: t.formFields.employmentStartDate,
+          placeholder: t.placeholders.employmentStartDate,
+          type: "date",
+        },
+        {
+          key: "employmentEndDate",
+          label: t.formFields.employmentEndDate,
+          placeholder: t.placeholders.employmentEndDate,
+          type: "date",
+        },
+      ],
+    },
+    {
+      title: t.formGroups.education,
+      fields: [
         { key: "school", label: t.formFields.school, placeholder: t.placeholders.school },
         { key: "major", label: t.formFields.major, placeholder: t.placeholders.major },
         { key: "gradCity", label: t.formFields.gradCity, placeholder: t.placeholders.gradCity },
@@ -122,6 +140,26 @@ export default function ProfileForm({
     updateField("phone", combinePhoneParts(nextDialCode, nextNationalNumber));
   }
 
+  function updateBooleanField(field: "currentlyWorking", value: boolean) {
+    onChange((current) => ({
+      ...current,
+      [field]: value,
+      employmentEndDate: value ? "" : current.employmentEndDate,
+    }));
+
+    if (value) {
+      setErrors((current) => {
+        if (!current.employmentEndDate) {
+          return current;
+        }
+
+        const nextErrors = { ...current };
+        delete nextErrors.employmentEndDate;
+        return nextErrors;
+      });
+    }
+  }
+
   function validateField(field: keyof UserProfile, value: string): string | undefined {
     const trimmedValue = value.trim();
 
@@ -147,7 +185,11 @@ export default function ProfileForm({
       return /^\d{4}$/.test(trimmedValue) ? undefined : t.validation.invalidGraduationYear;
     }
 
-    if (field === "birthDate") {
+    if (field === "birthDate" || field === "employmentStartDate" || field === "employmentEndDate") {
+      if (field === "employmentEndDate" && profile.currentlyWorking) {
+        return undefined;
+      }
+
       if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
         return t.validation.invalidBirthDate;
       }
@@ -193,6 +235,8 @@ export default function ProfileForm({
       "portfolio",
       "graduationYear",
       "birthDate",
+      "employmentStartDate",
+      "employmentEndDate",
       "phone",
     ];
 
@@ -208,13 +252,6 @@ export default function ProfileForm({
     return Object.keys(nextErrors).length === 0;
   }
 
-  function openBirthDatePicker() {
-    const input = birthDatePickerRef.current;
-    if (input && "showPicker" in input) {
-      input.showPicker();
-    }
-  }
-
   function normalizeBirthDateInput(rawValue: string) {
     const digits = rawValue.replace(/\D/g, "").slice(0, 8);
 
@@ -227,6 +264,61 @@ export default function ProfileForm({
     }
 
     return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
+  }
+
+  function openDatePicker(field: DateFieldKey) {
+    const input = datePickerRefs.current[field];
+    if (input && "showPicker" in input) {
+      input.showPicker();
+    }
+  }
+
+  function renderDateField(field: {
+    key: DateFieldKey;
+    label: string;
+    placeholder: string;
+  }) {
+    const isDisabled = field.key === "employmentEndDate" && profile.currentlyWorking;
+
+    return (
+      <div className="date-field">
+        <input
+          className={errors[field.key] ? "is-invalid" : ""}
+          disabled={isDisabled}
+          inputMode="numeric"
+          onBlur={(event) => handleFieldBlur(field.key, event.target.value)}
+          onChange={(event) => updateField(field.key, normalizeBirthDateInput(event.target.value))}
+          placeholder={field.placeholder}
+          type="text"
+          value={String(profile[field.key] ?? "")}
+        />
+        <button
+          aria-label={field.label}
+          className="date-picker-button"
+          disabled={isDisabled}
+          onClick={() => openDatePicker(field.key)}
+          type="button"
+        >
+          <svg aria-hidden="true" viewBox="0 -960 960 960">
+            <path
+              d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h80v-80h80v80h240v-80h80v80h80q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-360H200v360Zm0-440h560v-120H200v120Zm0 0v-120 120Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+        <input
+          className="date-picker-native"
+          disabled={isDisabled}
+          onChange={(event) => updateField(field.key, event.target.value)}
+          ref={(element) => {
+            datePickerRefs.current[field.key] = element;
+          }}
+          tabIndex={-1}
+          type="date"
+          value={String(profile[field.key] ?? "")}
+        />
+      </div>
+    );
   }
 
   return (
@@ -255,39 +347,14 @@ export default function ProfileForm({
                       <option value={GENDER_VALUES[2]}>{t.genderOptions.nonBinary}</option>
                       <option value={GENDER_VALUES[3]}>{t.genderOptions.preferNotToAnswer}</option>
                     </select>
-                  ) : field.key === "birthDate" ? (
-                    <div className="date-field">
-                      <input
-                        className={errors[field.key] ? "is-invalid" : ""}
-                        inputMode="numeric"
-                        onBlur={(event) => handleFieldBlur(field.key, event.target.value)}
-                        onChange={(event) => updateField(field.key, normalizeBirthDateInput(event.target.value))}
-                        placeholder={field.placeholder}
-                        type="text"
-                        value={profile.birthDate ?? ""}
-                      />
-                      <button
-                        aria-label={field.label}
-                        className="date-picker-button"
-                        onClick={openBirthDatePicker}
-                        type="button"
-                      >
-                        <svg aria-hidden="true" viewBox="0 -960 960 960">
-                          <path
-                            d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h80v-80h80v80h240v-80h80v80h80q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-360H200v360Zm0-440h560v-120H200v120Zm0 0v-120 120Z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                      </button>
-                      <input
-                        className="date-picker-native"
-                        onChange={(event) => updateField(field.key, event.target.value)}
-                        ref={birthDatePickerRef}
-                        tabIndex={-1}
-                        type="date"
-                        value={profile.birthDate ?? ""}
-                      />
-                    </div>
+                  ) : field.key === "birthDate" ||
+                    field.key === "employmentStartDate" ||
+                    field.key === "employmentEndDate" ? (
+                    renderDateField({
+                      key: field.key,
+                      label: field.label,
+                      placeholder: field.placeholder,
+                    })
                   ) : (
                     <input
                       className={errors[field.key] ? "is-invalid" : ""}
@@ -295,7 +362,7 @@ export default function ProfileForm({
                       onChange={(event) => updateField(field.key, event.target.value)}
                       placeholder={field.placeholder}
                       type={field.type ?? "text"}
-                      value={profile[field.key] ?? ""}
+                      value={String(profile[field.key] ?? "")}
                     />
                   )}
                   {errors[field.key] ? <small className="field-error">{errors[field.key]}</small> : null}
@@ -350,6 +417,17 @@ export default function ProfileForm({
                   </div>
                   {errors.phone ? <small className="field-error">{errors.phone}</small> : null}
                 </div>
+              ) : null}
+
+              {group.title === t.formGroups.experience ? (
+                <label className="checkbox-field field-full">
+                  <input
+                    checked={profile.currentlyWorking}
+                    onChange={(event) => updateBooleanField("currentlyWorking", event.target.checked)}
+                    type="checkbox"
+                  />
+                  <span>{t.formFields.currentlyWorking}</span>
+                </label>
               ) : null}
             </div>
           </section>

@@ -44,7 +44,8 @@ export const tr: Translations = {
     core: "Temel Profil",
     links: "Bağlantılar",
     location: "Konum",
-    professional: "Profesyonel",
+    experience: "Deneyim",
+    education: "Eğitim",
     personal: "Kişisel",
   },
   formFields: {
@@ -64,6 +65,9 @@ export const tr: Translations = {
     country: "Ülke",
     company: "Şirket",
     jobTitle: "Pozisyon",
+    employmentStartDate: "Başlama Tarihi",
+    employmentEndDate: "Ayrılma Tarihi",
+    currentlyWorking: "Hâlâ devam ediyor",
     school: "Okul",
     major: "Bölüm",
     gradCity: "Mezuniyet Şehri",
@@ -88,6 +92,9 @@ export const tr: Translations = {
     country: "Türkiye",
     company: "Örnek Teknoloji A.Ş.",
     jobTitle: "Frontend Geliştirici",
+    employmentStartDate: "2023-01-01",
+    employmentEndDate: "2024-06-01",
+    currentlyWorking: "Devam ediyor",
     school: "Orta Doğu Teknik Üniversitesi",
     major: "Bilgisayar Mühendisliği",
     gradCity: "Ankara",
@@ -98,7 +105,7 @@ export const tr: Translations = {
   genderOptions: {
     male: "Erkek",
     female: "Kadın",
-    nonBinary: "İkili cinsiyet dışı / Non-binary",
+    nonBinary: "İkili cinsiyet dışında",
     preferNotToAnswer: "Belirtmek istemiyorum",
   },
   validation: {
@@ -106,6 +113,6 @@ export const tr: Translations = {
     invalidUrl: "Geçerli bir bağlantı giriniz.",
     invalidPhone: "Geçerli bir telefon numarası giriniz.",
     invalidGraduationYear: "Mezuniyet yılı 4 haneli olmalıdır.",
-    invalidBirthDate: "Doğum tarihini YYYY-AA-GG formatında giriniz.",
+    invalidBirthDate: "Tarihi YYYY-AA-GG formatında giriniz.",
   },
 };

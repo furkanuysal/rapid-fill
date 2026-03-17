@@ -17,6 +17,9 @@ export const EMPTY_PROFILE: UserProfile = {
   birthDate: "",
   company: "",
   jobTitle: "",
+  employmentStartDate: "",
+  employmentEndDate: "",
+  currentlyWorking: false,
   school: "",
   major: "",
   gradCity: "",
@@ -36,8 +39,26 @@ export function isProfileReady(profile: UserProfile) {
 
 export function getCompletionRatio(profile: UserProfile) {
   const trackedFields = Object.keys(EMPTY_PROFILE) as Array<keyof UserProfile>;
-  const completed = trackedFields.filter((field) => profile[field]?.trim()).length;
+  const completed = trackedFields.filter((field) => isFieldCompleted(profile, field)).length;
   return Math.round((completed / trackedFields.length) * 100);
+}
+
+function isFieldCompleted(profile: UserProfile, field: keyof UserProfile) {
+  if (field === "currentlyWorking") {
+    return profile.currentlyWorking;
+  }
+
+  if (field === "employmentEndDate" && profile.currentlyWorking) {
+    return true;
+  }
+
+  const value = profile[field];
+
+  if (typeof value === "string") {
+    return Boolean(value.trim());
+  }
+
+  return Boolean(value);
 }
 
 export function formatFullName(profile: UserProfile) {

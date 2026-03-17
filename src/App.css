@@ -111,10 +111,10 @@
 }
 
 .brand-icon {
-  width: 28px;
-  height: 28px;
+  width: 48px;
+  height: 48px;
   display: block;
-  flex: 0 0 28px;
+  flex: 0 0 48px;
   border-radius: 7px;
   object-fit: contain;
 }
@@ -677,6 +677,11 @@
   color: #f3f6ff;
 }
 
+.date-picker-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .date-picker-button svg {
   width: 16px;
   height: 16px;
@@ -689,6 +694,27 @@
   height: 0;
   opacity: 0;
   pointer-events: none;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 2px;
+}
+
+.checkbox-field input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #3d6bff;
+}
+
+.checkbox-field span {
+  margin: 0;
+  color: #dce5ff;
+  font-size: 0.82rem;
 }
 
 .phone-code-field .field-select option {

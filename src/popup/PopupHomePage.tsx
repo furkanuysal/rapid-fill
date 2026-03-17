@@ -54,9 +54,9 @@ export default function PopupHomePage({
             alt=""
             aria-hidden="true"
             className="brand-icon"
-            height="32"
-            src="/icons/32x32.png"
-            width="32"
+            height="48"
+            src="/icons/48x48.png"
+            width="48"
           />
           <div className="brand-copy">
             <h1>{t.appName}</h1>

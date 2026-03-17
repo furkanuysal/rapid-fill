@@ -45,7 +45,8 @@ export interface Translations {
     core: string;
     links: string;
     location: string;
-    professional: string;
+    experience: string;
+    education: string;
     personal: string;
   };
   formFields: {
@@ -65,6 +66,9 @@ export interface Translations {
     country: string;
     company: string;
     jobTitle: string;
+    employmentStartDate: string;
+    employmentEndDate: string;
+    currentlyWorking: string;
     school: string;
     major: string;
     gradCity: string;
@@ -89,6 +93,9 @@ export interface Translations {
     country: string;
     company: string;
     jobTitle: string;
+    employmentStartDate: string;
+    employmentEndDate: string;
+    currentlyWorking: string;
     school: string;
     major: string;
     gradCity: string;

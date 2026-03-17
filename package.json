@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build:chrome": "vite build && npx esbuild src/content/contentScript.ts --bundle --outfile=dist/contentScript.js && cpy public/manifests/manifest.chrome.json dist/manifest.json",
-    "build:firefox": "vite build && npx esbuild src/content/contentScript.ts --bundle --outfile=dist/contentScript.js && cpy public/manifests/manifest.firefox.json dist/manifest.json"
+    "build:chrome": "vite build --outDir dist/chrome && npx esbuild src/content/contentScript.ts --bundle --outfile=dist/chrome/contentScript.js && cpy public/manifests/manifest.chrome.json dist/chrome/manifest.json",
+    "build:firefox": "vite build --outDir dist/firefox && npx esbuild src/content/contentScript.ts --bundle --outfile=dist/firefox/contentScript.js && cpy public/manifests/manifest.firefox.json dist/firefox/manifest.json"
   },
   "dependencies": {
     "libphonenumber-js": "^1.12.39",

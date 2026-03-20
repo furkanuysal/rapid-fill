@@ -38,16 +38,14 @@ export function isProfileReady(profile: UserProfile) {
 }
 
 export function getCompletionRatio(profile: UserProfile) {
-  const trackedFields = Object.keys(EMPTY_PROFILE) as Array<keyof UserProfile>;
+  const trackedFields = (Object.keys(EMPTY_PROFILE) as Array<keyof UserProfile>).filter(
+    (field) => field !== "currentlyWorking",
+  );
   const completed = trackedFields.filter((field) => isFieldCompleted(profile, field)).length;
   return Math.round((completed / trackedFields.length) * 100);
 }
 
 function isFieldCompleted(profile: UserProfile, field: keyof UserProfile) {
-  if (field === "currentlyWorking") {
-    return profile.currentlyWorking;
-  }
-
   if (field === "employmentEndDate" && profile.currentlyWorking) {
     return true;
   }

@@ -264,7 +264,8 @@
 }
 
 .insight-panel-button {
-  width: auto;
+  display: flex;
+  width: calc(100% - 24px);
 }
 
 .overview-tile-button:hover,
@@ -644,56 +645,101 @@
   padding-inline: 14px 12px;
 }
 
-.date-field {
-  position: relative;
+.react-datepicker-wrapper {
+  width: 100%;
 }
 
-.date-field input[type="text"] {
-  padding-right: 44px;
+.react-datepicker__input-container input {
+  width: 100%;
 }
 
-.date-picker-button {
-  position: absolute;
-  top: 50%;
-  right: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 0;
-  border-radius: 8px;
-  background: rgba(26, 45, 86, 0.88);
-  color: #b7c7ea;
-  transform: translateY(-50%);
-  transition:
-    background-color 160ms ease,
-    color 160ms ease;
+.rapid-datepicker-popper {
+  z-index: 9999 !important;
 }
 
-.date-picker-button:hover {
-  background: rgba(40, 67, 120, 0.92);
-  color: #f3f6ff;
+.rapid-datepicker-calendar.react-datepicker {
+  border: 1px solid rgba(95, 117, 170, 0.28) !important;
+  border-radius: 14px !important;
+  background: #0b1730 !important;
+  color: #e8efff !important;
+  box-shadow: 0 18px 34px rgba(2, 8, 20, 0.42) !important;
+  font-family: inherit !important;
 }
 
-.date-picker-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+.rapid-datepicker-calendar .react-datepicker__header {
+  border-bottom: 1px solid rgba(95, 117, 170, 0.18) !important;
+  background: linear-gradient(180deg, rgba(18, 31, 58, 0.98), rgba(11, 23, 43, 0.98)) !important;
 }
 
-.date-picker-button svg {
-  width: 16px;
-  height: 16px;
-  display: block;
+.rapid-datepicker-calendar .react-datepicker__current-month,
+.rapid-datepicker-calendar .react-datepicker-time__header,
+.rapid-datepicker-calendar .react-datepicker-year-header,
+.rapid-datepicker-calendar .react-datepicker__day-name,
+.rapid-datepicker-calendar .react-datepicker__day,
+.rapid-datepicker-calendar .react-datepicker__month-text,
+.rapid-datepicker-calendar .react-datepicker__quarter-text,
+.rapid-datepicker-calendar .react-datepicker__year-text {
+  color: #e8efff !important;
 }
 
-.date-picker-native {
-  position: absolute;
-  width: 0;
-  height: 0;
-  opacity: 0;
-  pointer-events: none;
+.rapid-datepicker-calendar .react-datepicker__day,
+.rapid-datepicker-calendar .react-datepicker__month-text,
+.rapid-datepicker-calendar .react-datepicker__quarter-text,
+.rapid-datepicker-calendar .react-datepicker__year-text,
+.rapid-datepicker-calendar .react-datepicker__day-name {
+  background: transparent !important;
+}
+
+.rapid-datepicker-calendar .react-datepicker__day:hover,
+.rapid-datepicker-calendar .react-datepicker__month-text:hover,
+.rapid-datepicker-calendar .react-datepicker__quarter-text:hover,
+.rapid-datepicker-calendar .react-datepicker__year-text:hover {
+  background: rgba(49, 102, 255, 0.16) !important;
+}
+
+.rapid-datepicker-calendar .react-datepicker__day--keyboard-selected,
+.rapid-datepicker-calendar .react-datepicker__month-text--keyboard-selected,
+.rapid-datepicker-calendar .react-datepicker__quarter-text--keyboard-selected,
+.rapid-datepicker-calendar .react-datepicker__year-text--keyboard-selected {
+  background: rgba(49, 102, 255, 0.24) !important;
+}
+
+.rapid-datepicker-calendar .react-datepicker__day--selected,
+.rapid-datepicker-calendar .react-datepicker__month-text--selected,
+.rapid-datepicker-calendar .react-datepicker__quarter-text--selected,
+.rapid-datepicker-calendar .react-datepicker__year-text--selected {
+  background: #2f63ff !important;
+  color: #f8fbff !important;
+}
+
+.rapid-datepicker-calendar .react-datepicker__navigation-icon::before {
+  border-color: #cfe0ff !important;
+}
+
+.rapid-datepicker-calendar .react-datepicker__month-dropdown,
+.rapid-datepicker-calendar .react-datepicker__year-dropdown {
+  background: #102041 !important;
+  border: 1px solid rgba(95, 117, 170, 0.28) !important;
+}
+
+.rapid-datepicker-calendar .react-datepicker__month-read-view,
+.rapid-datepicker-calendar .react-datepicker__year-read-view,
+.rapid-datepicker-calendar .react-datepicker__month-select,
+.rapid-datepicker-calendar .react-datepicker__year-select {
+  color: #e8efff !important;
+  background: #102041 !important;
+  border: 1px solid rgba(95, 117, 170, 0.22) !important;
+  border-radius: 8px !important;
+}
+
+.rapid-datepicker-calendar .react-datepicker__triangle,
+.rapid-datepicker-calendar .react-datepicker__triangle::before,
+.rapid-datepicker-calendar .react-datepicker__triangle::after {
+  display: none !important;
+}
+
+.react-datepicker__input-container input::placeholder {
+  color: #6277a7;
 }
 
 .checkbox-field {

@@ -1,8 +1,11 @@
 import { useRef, useState } from "react";
+import { format, isValid, parseISO } from "date-fns";
+import DatePicker from "react-datepicker";
 import type { Dispatch, SetStateAction } from "react";
 import type { Translations } from "../lib/i18n";
 import type { UserProfile } from "../types/UserProfile";
 import { combinePhoneParts, getPhoneParts, PHONE_COUNTRY_OPTIONS } from "./phoneCountryCodes";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface ProfileFormProps {
   profile: UserProfile;
@@ -37,8 +40,9 @@ export default function ProfileForm({
   isSaving,
   t,
 }: ProfileFormProps) {
-  const datePickerRefs = useRef<Partial<Record<DateFieldKey, HTMLInputElement | null>>>({});
   const [errors, setErrors] = useState<ValidationErrors>({});
+  const datePickerRefs = useRef<Partial<Record<DateFieldKey, InstanceType<typeof DatePicker> | null>>>({});
+  const currentYear = new Date().getFullYear();
 
   const fieldGroups: Array<{
     title: string;
@@ -252,8 +256,8 @@ export default function ProfileForm({
     return Object.keys(nextErrors).length === 0;
   }
 
-  function normalizeBirthDateInput(rawValue: string) {
-    const digits = rawValue.replace(/\D/g, "").slice(0, 8);
+  function normalizeBirthDateInput(rawValue?: string) {
+    const digits = (rawValue ?? "").replace(/\D/g, "").slice(0, 8);
 
     if (digits.length <= 4) {
       return digits;
@@ -266,11 +270,17 @@ export default function ProfileForm({
     return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
   }
 
-  function openDatePicker(field: DateFieldKey) {
-    const input = datePickerRefs.current[field];
-    if (input && "showPicker" in input) {
-      input.showPicker();
+  function parseDateValue(value: string): Date | null {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return null;
     }
+
+    const parsed = parseISO(value);
+    return isValid(parsed) ? parsed : null;
+  }
+
+  function formatDateValue(value: Date | null) {
+    return value ? format(value, "yyyy-MM-dd") : "";
   }
 
   function renderDateField(field: {
@@ -281,43 +291,41 @@ export default function ProfileForm({
     const isDisabled = field.key === "employmentEndDate" && profile.currentlyWorking;
 
     return (
-      <div className="date-field">
-        <input
-          className={errors[field.key] ? "is-invalid" : ""}
-          disabled={isDisabled}
-          inputMode="numeric"
-          onBlur={(event) => handleFieldBlur(field.key, event.target.value)}
-          onChange={(event) => updateField(field.key, normalizeBirthDateInput(event.target.value))}
-          placeholder={field.placeholder}
-          type="text"
-          value={String(profile[field.key] ?? "")}
-        />
-        <button
-          aria-label={field.label}
-          className="date-picker-button"
-          disabled={isDisabled}
-          onClick={() => openDatePicker(field.key)}
-          type="button"
-        >
-          <svg aria-hidden="true" viewBox="0 -960 960 960">
-            <path
-              d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h80v-80h80v80h240v-80h80v80h80q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-360H200v360Zm0-440h560v-120H200v120Zm0 0v-120 120Z"
-              fill="currentColor"
-            />
-          </svg>
-        </button>
-        <input
-          className="date-picker-native"
-          disabled={isDisabled}
-          onChange={(event) => updateField(field.key, event.target.value)}
-          ref={(element) => {
-            datePickerRefs.current[field.key] = element;
-          }}
-          tabIndex={-1}
-          type="date"
-          value={String(profile[field.key] ?? "")}
-        />
-      </div>
+      <DatePicker
+        autoComplete="off"
+        calendarClassName="rapid-datepicker-calendar"
+        className={errors[field.key] ? "is-invalid" : ""}
+        dateFormat="yyyy-MM-dd"
+        disabled={isDisabled}
+        dropdownMode="select"
+        preventOpenOnFocus
+        ref={(instance) => {
+          datePickerRefs.current[field.key] = instance;
+        }}
+        onCalendarClose={() => handleFieldBlur(field.key, String(profile[field.key] ?? ""))}
+        onChange={(value: Date | null) => {
+          updateField(field.key, formatDateValue(value));
+          datePickerRefs.current[field.key]?.setOpen(false);
+        }}
+        onSelect={() => {
+          datePickerRefs.current[field.key]?.setOpen(false);
+        }}
+        onChangeRaw={(event) => {
+          if (!event) return;
+          const target = event.target;
+          const nextValue = target instanceof HTMLInputElement ? target.value : "";
+          updateField(field.key, normalizeBirthDateInput(nextValue));
+        }}
+        placeholderText={field.placeholder}
+        popperPlacement="bottom-start"
+        popperClassName="rapid-datepicker-popper"
+        selected={parseDateValue(String(profile[field.key] ?? ""))}
+        shouldCloseOnSelect
+        showMonthDropdown
+        showPopperArrow={false}
+        showYearDropdown
+        yearDropdownItemNumber={100}
+      />
     );
   }
 
@@ -347,6 +355,32 @@ export default function ProfileForm({
                       <option value={GENDER_VALUES[2]}>{t.genderOptions.nonBinary}</option>
                       <option value={GENDER_VALUES[3]}>{t.genderOptions.preferNotToAnswer}</option>
                     </select>
+                  ) : field.key === "graduationYear" ? (
+                    <input
+                      className={errors[field.key] ? "is-invalid" : ""}
+                      inputMode="numeric"
+                      onBlur={(event) => handleFieldBlur(field.key, event.target.value)}
+                      onChange={(event) => {
+                        const nextValue = event.target.value.replace(/\D/g, "").slice(0, 4);
+
+                        if (!profile.graduationYear && (nextValue === "1" || nextValue === "0")) {
+                          updateField(field.key, String(currentYear));
+                          return;
+                        }
+
+                        updateField(field.key, nextValue);
+                      }}
+                      onKeyDown={(event) => {
+                        if ((event.key === "ArrowUp" || event.key === "ArrowDown") && !profile.graduationYear) {
+                          event.preventDefault();
+                          updateField(field.key, String(event.key === "ArrowUp" ? currentYear : currentYear - 1));
+                        }
+                      }}
+                      placeholder={field.placeholder}
+                      step="1"
+                      type="number"
+                      value={profile.graduationYear ?? ""}
+                    />
                   ) : field.key === "birthDate" ||
                     field.key === "employmentStartDate" ||
                     field.key === "employmentEndDate" ? (

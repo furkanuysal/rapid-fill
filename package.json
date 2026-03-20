@@ -12,8 +12,10 @@
     "build:firefox": "vite build --outDir dist/firefox && npx esbuild src/content/contentScript.ts --bundle --outfile=dist/firefox/contentScript.js && cpy public/manifests/manifest.firefox.json dist/firefox/manifest.json"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
     "libphonenumber-js": "^1.12.39",
     "react": "^19.2.0",
+    "react-datepicker": "^9.1.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {

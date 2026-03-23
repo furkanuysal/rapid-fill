@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "RapidFill",
   "description": "Autofill job application forms instantly using your saved profile data",
-  "version": "1.0.0",
+  "version": "1.0.1",
 
   "permissions": ["storage", "activeTab", "scripting"],
 

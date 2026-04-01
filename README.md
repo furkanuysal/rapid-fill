@@ -4,8 +4,8 @@
   <a href="https://github.com/furkanuysal/rapid-fill/releases"><img alt="Version" src="https://img.shields.io/github/v/release/furkanuysal/rapid-fill?display_name=tag&color=2f63ff"></a>
   <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-1f8b4c"></a>
   <a href="https://github.com/furkanuysal/rapid-fill/releases"><img alt="GitHub Releases" src="https://img.shields.io/badge/Releases-Downloads-181717?logo=github&logoColor=white"></a>
+  <a href="https://chromewebstore.google.com/detail/rapidfill/hhlmkpjjadjnclhlgjnaidjlgghdkeen"><img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome%20Web%20Store-Live-4285f4?logo=googlechrome&logoColor=white"></a>
   <a href="https://addons.mozilla.org/tr/firefox/addon/rapidfill/"><img alt="Firefox Add-ons" src="https://img.shields.io/badge/Mozilla%20Add--ons-Live-ff9500?logo=firefoxbrowser&logoColor=white"></a>
-  <a href="./public/manifests/manifest.chrome.json"><img alt="Chrome Extension" src="https://img.shields.io/badge/Chrome-Extension-4285f4?logo=googlechrome&logoColor=white"></a>
   <a href="https://react.dev/"><img alt="React" src="https://img.shields.io/badge/React-19-20232a?logo=react"></a>
   <a href="https://www.typescriptlang.org/"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.9-3178c6?logo=typescript&logoColor=white"></a>
   <a href="https://vite.dev/"><img alt="Vite" src="https://img.shields.io/badge/Vite-7.3-646cff?logo=vite&logoColor=white"></a>
@@ -173,6 +173,7 @@ dist/firefox/
 ## Downloads
 
 - GitHub release builds for Chrome and Firefox are available on [GitHub Releases](https://github.com/furkanuysal/rapid-fill/releases).
+- The Chrome version is published on the [Chrome Web Store](https://chromewebstore.google.com/detail/rapidfill/hhlmkpjjadjnclhlgjnaidjlgghdkeen).
 - The Firefox version is also published on [Mozilla Add-ons](https://addons.mozilla.org/tr/firefox/addon/rapidfill/).
 
 ## Internationalization
